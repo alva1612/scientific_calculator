@@ -1,4 +1,24 @@
+use std::num::ParseIntError;
 use regex::Regex;
+use regex::Captures;
+
+fn capture_input(caps: Captures<'_>) -> Result<(&str ,i32, i32), ParseIntError> {
+
+            let cap_expression = caps.get(0).unwrap().as_str();
+            let left_value: i32 = match caps.get(1).unwrap().as_str().parse() {
+                Ok(num) => num,
+                Err(e) => {
+                    return  Err(e);
+                }
+            };
+            let rigth_value = match caps.get(2).unwrap().as_str().parse() {
+                Ok(num) => num,
+                Err(e) => {
+                    return  Err(e);
+                }
+            };
+            return Ok((cap_expression ,left_value, rigth_value))
+}
 
 fn main() {
     //REGEX
@@ -10,6 +30,7 @@ fn main() {
     //DATA DEL USUARIO
 
     loop {
+        
         let mut expression = String::new();
         let mut exists_error = false;
         println!("Ingrese la operación");
@@ -27,25 +48,8 @@ fn main() {
 
             let caps = caps.unwrap();
 
-            let cap_expression = caps.get(0).unwrap().as_str();
-            let left_value: i32 = match caps.get(1).unwrap().as_str().parse() {
-                Ok(num) => num,
-                Err(_) => {
-                    exists_error = true;
-                    println!("Input error");
-                    break;
-                }
-            };
-            let rigth_value: i32 = match caps.get(2).unwrap().as_str().parse() {
-                Ok(num) => num,
-                Err(_) => {
-                    exists_error = true;
-                    println!("Input error");
-                    break;
-                }
-            };
-
-            let result = left_value / rigth_value;
+            let (cap_expression, left_value, right_value) = capture_input(caps).unwrap();
+            let result = left_value / right_value;
 
             expression = expression.replace(cap_expression, &result.to_string());
         }
@@ -59,12 +63,8 @@ fn main() {
             }
 
             let caps = caps.unwrap();
-
-            let cap_expression = caps.get(0).unwrap().as_str();
-            let left_value: i32 = caps.get(1).unwrap().as_str().parse().unwrap();
-            let rigth_value: i32 = caps.get(2).unwrap().as_str().parse().unwrap();
-
-            let result = left_value * rigth_value;
+            let (cap_expression, left_value, right_value) = capture_input(caps).unwrap();
+            let result = left_value * right_value;
 
             expression = expression.replace(cap_expression, &result.to_string());
         }
@@ -78,10 +78,7 @@ fn main() {
             }
 
             let caps = caps.unwrap();
-
-            let cap_expression = caps.get(0).unwrap().as_str();
-            let left_value: i32 = caps.get(1).unwrap().as_str().parse().unwrap();
-            let rigth_value: i32 = caps.get(2).unwrap().as_str().parse().unwrap();
+            let (cap_expression, left_value, rigth_value) = capture_input(caps).unwrap();
 
             let addition = left_value + rigth_value;
 
@@ -97,10 +94,7 @@ fn main() {
             }
 
             let caps = caps.unwrap();
-
-            let cap_expression = caps.get(0).unwrap().as_str();
-            let left_value: i32 = caps.get(1).unwrap().as_str().parse().unwrap();
-            let rigth_value: i32 = caps.get(2).unwrap().as_str().parse().unwrap();
+            let (cap_expression, left_value, rigth_value) = capture_input(caps).unwrap();
 
             let addition = left_value - rigth_value;
 
@@ -111,6 +105,8 @@ fn main() {
             continue;
         }
 
+
         println!("Res: {}", expression);
     }
 }
+
